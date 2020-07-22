@@ -1,0 +1,31 @@
+body {
+  color: white;
+  background-image: url("./image/tim-mossholder-aFtibpO0hQQ-unsplash.jpg");
+}
+
+#row {
+  height: 100%;
+  width: 100%;
+}
+.create_forms {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+input {
+  border-color: teal;
+  color: black;
+  -webkit-box-shadow: 9px -4px 16px -2px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 9px -4px 16px -2px rgba(0, 0, 0, 0.75);
+  box-shadow: 9px -4px 16px -2px rgba(0, 0, 0, 0.75);
+}
+#header {
+  text-align: center;
+}
+.download-btn {
+  display: block;
+  background-color: tomato;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 40px;
+}

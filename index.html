@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/lib/external/moment.min.js"></script>
+    <script src="/lib/external/jquery.min.js"></script>
+    <script src="/lib/external/index.js"></script>
+    <script src="/lib/external/bootstrap.min.js"></script>
+    <script src="/dist/timetable.min.js?timestamp=3"></script>
+    <link rel="stylesheet" type="text/css" href="/elessar.css" />
+    <link rel="stylesheet" type="text/css" href="/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+  </head>
+  <body>
+    <div class="row" id="row">
+      <p class="h2" id="header">SCHEDULER IN JS</p>
+      <div id="slider-1" class="col-md-12"></div>
+      <br />
+
+      <br />
+      <br />
+      <div id="slider-1-control" class="row create_forms">
+        <div class="col-md-6 form_div">
+          <h4>Create form</h4>
+          <hr />
+          <form id="cerate-form-1">
+            <div class="form-group">
+              <label for="time_start">Time start</label>
+              <input
+                type="time"
+                name="work_start"
+                data-tt-model="work_start"
+                placeholder="HH:mm ex) 19:30"
+              />
+            </div>
+            <div class="form-group">
+              <label for="time_end">Time End</label>
+              <input
+                type="time"
+                name="work_end"
+                data-tt-model="work_end"
+                placeholder="HH:mm ex) 20:30"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="event_type">Event Type</label>
+              <input type="text" name="job_name" data-tt-model="job_name" />
+            </div>
+            <div class="form-group">
+              <label for="event_id">Event Id</label>
+              <input type="text" name="job_id" data-tt-model="job_id" />
+            </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <input
+                type="text"
+                name="timecard_id"
+                data-tt-model="timecard_id"
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-default"
+              class="btn btn-primary"
+            >
+              Create
+            </button>
+          </form>
+        </div>
+        <div class="col-md-6 form_div">
+          <h4>Edit form</h4>
+          <hr />
+          <form id="edit-form-1">
+            <div class="form-group">
+              <label for="time_start">Time start</label>
+              <input
+                type="time"
+                name="work_start"
+                data-tt-model="work_start"
+                placeholder="HH:mm ex) 19:30"
+              />
+            </div>
+            <div class="form-group">
+              <label for="time_end">Time End</label>
+              <input
+                type="time"
+                name="work_end"
+                data-tt-model="work_end"
+                placeholder="HH:mm ex) 20:30"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="event_type">Event Type</label>
+              <input type="text" name="job_name" data-tt-model="job_name" />
+            </div>
+            <div class="form-group">
+              <label for="event_id">Event Id</label>
+              <input type="text" name="job_id" data-tt-model="job_id" />
+            </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <input
+                type="text"
+                name="timecard_id"
+                data-tt-model="timecard_id"
+              />
+            </div>
+
+            <button
+              class="btn btn-danger delete-task"
+              data-tt-model="deleteButton"
+            >
+              delete
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div>
+        <button class="btn btn-success export-to-json download-btn">
+          Download Json
+        </button>
+      </div>
+    </div>
+
+    <script>
+      var timeTableFirst = TimeTable();
+      $("#slider-1").prepend(timeTableFirst.$el);
+      timeTableFirst
+        .on("click.task", function (ev, t) {
+          timeTableFirst.unbindTasks();
+          timeTableFirst.unFocusTasks();
+          timeTableFirst.bindTaskForm(t, $("#edit-form-1"));
+          timeTableFirst.focusTask(t);
+        })
+        .on("change.", function (ev, t) {
+          $("#event-console-box").prepend(
+            $("<pre>").html(
+              JSON.stringify(
+                $.extend(t.toJsonObj(), { event: "change task" }),
+                null,
+                2
+              )
+            )
+          );
+        })
+        .on("addtask", function (ev, t) {
+          timeTableFirst.unbindTasks();
+          timeTableFirst.unFocusTasks();
+          timeTableFirst.bindTaskForm(t, $("#edit-form-1"));
+          timeTableFirst.focusTask(t);
+          $("#event-console-box").prepend(
+            $("<pre>").html(
+              JSON.stringify(
+                $.extend(t.toJsonObj(), { event: "add task" }),
+                null,
+                2
+              )
+            )
+          );
+        })
+        .on("delete.task", function (ev, jobId) {
+          $("#event-console-box").prepend(
+            $("<pre>").html(
+              JSON.stringify({ event: "delete task", job_id: jobId }),
+              null,
+              2
+            )
+          );
+        });
+
+      $("#cerate-form-1").submit(function (e) {
+        e.preventDefault();
+        var sArray = $(this).serializeArray();
+        var params = {};
+        for (var t of sArray) {
+          params[t.name] = t.value;
+        }
+        timeTableFirst.addTask(params);
+      });
+      $(".delete-task").click(function (e) {
+        e.preventDefault();
+      });
+
+      $(".export-to-json").click(function () {
+        var text = JSON.stringify(timeTableFirst.toJsonObj(), null, 2);
+        var filename = "schedule.json";
+        var element = document.createElement("a");
+        element.setAttribute(
+          "href",
+          "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+        );
+        element.setAttribute("download", filename);
+        element.style.display = "none";
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      });
+    </script>
+  </body>
+</html>
